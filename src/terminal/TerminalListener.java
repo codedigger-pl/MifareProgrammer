@@ -4,6 +4,6 @@ import javax.smartcardio.CardTerminal;
 
 
 public interface TerminalListener {
-    void onTerminalAppears(CardTerminal terminal);
+    void onTerminalAppears(TerminalThread thread, CardTerminal terminal);
     void onTerminalDisappears();
 }

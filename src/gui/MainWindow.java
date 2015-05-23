@@ -1,13 +1,16 @@
 package gui;
 
+import javax.smartcardio.Card;
 import javax.smartcardio.CardTerminal;
 import javax.swing.*;
-import terminal.TerminalListener;
+
+import terminal.*;
 
 
-public class MainWindow implements TerminalListener {
+public class MainWindow implements TerminalListener, CardListener {
     private JPanel panel1;
     private JLabel terminalName;
+    private JLabel cardName;
 
     public static MainWindow main() {
         MainWindow mainWindow = new MainWindow();
@@ -22,8 +25,12 @@ public class MainWindow implements TerminalListener {
     }
 
     @Override
-    public void onTerminalAppears(CardTerminal terminal) {
+    public void onTerminalAppears(TerminalThread thread, CardTerminal terminal) {
         terminalName.setText(terminal.getName());
+
+        CardThread cardThread = thread.getCardThread();
+        cardThread.addListener(CardAction.onCardConnected, this);
+        cardThread.addListener(CardAction.onCardDisconnected, this);
     }
 
     @Override
@@ -31,4 +38,9 @@ public class MainWindow implements TerminalListener {
         terminalName.setText("Brak czytnika");
     }
 
+    @Override
+    public void onCardConnected(Card card) { cardName.setText("Karta obecna"); }
+
+    @Override
+    public void onCardDisconnected() { cardName.setText("Brak karty"); }
 }

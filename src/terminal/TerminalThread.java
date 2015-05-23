@@ -8,11 +8,14 @@ import java.util.List;
 
 
 public class TerminalThread extends Thread {
-    CardTerminal terminal = null;
-    CardThread cardThread = null;
+    private CardTerminal terminal = null;
+    private CardThread cardThread = null;
 
     List<TerminalListener> onTerminalConnectedListeners = new ArrayList<>();
     List<TerminalListener> onTerminalDisconnectedListeners = new ArrayList<>();
+
+    public CardThread getCardThread() { return cardThread; }
+    public CardTerminal getTerminal() { return terminal; }
 
     @Override
     public void run() {
@@ -25,16 +28,14 @@ public class TerminalThread extends Thread {
                 CardTerminal readedTerminal = readedTerminals.get(0);
                 if (terminal != readedTerminal) {
                     terminal = readedTerminal;
-//                    System.out.println("New terminal present: " + terminal);
-                    onTerminalAppears();
                     startCardThread();
+                    onTerminalAppears();
                 }
             } catch (CardException e) {
                 stopCardThread();
                 if (terminal != null) {
                     onTerminalDisappears();
                     terminal = null;
-//                    System.out.println("Terminal removed");
                 }
             }
 
@@ -47,17 +48,15 @@ public class TerminalThread extends Thread {
         }
     }
 
-    void startCardThread() {
+    private void startCardThread() {
         if (cardThread == null) {
-//            System.out.println("Starting card thread");
             cardThread = new CardThread(terminal);
             cardThread.start();
         }
     }
 
-    void stopCardThread() {
+    private void stopCardThread() {
         if (cardThread != null) {
-//            System.out.println("Stopping card thread");
             cardThread.interrupt();
             cardThread = null;
         }
@@ -74,13 +73,13 @@ public class TerminalThread extends Thread {
         }
     }
 
-    void onTerminalAppears() {
+    private void onTerminalAppears() {
         for (TerminalListener listener: onTerminalConnectedListeners) {
-            listener.onTerminalAppears(terminal);
+            listener.onTerminalAppears(this, terminal);
         }
     }
 
-    void onTerminalDisappears() {
+    private void onTerminalDisappears() {
         for (TerminalListener listener: onTerminalDisconnectedListeners) {
             listener.onTerminalDisappears();
         }
