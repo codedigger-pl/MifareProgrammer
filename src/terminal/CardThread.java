@@ -40,7 +40,7 @@ public class CardThread extends Thread {
         while (true) {
 
             try {
-                Card newCard = cardTerminal.connect("T=1");
+                Card newCard = cardTerminal.connect("*");
                 if (card != newCard) {
                     card = newCard;
                     onCardConnected();

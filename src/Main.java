@@ -16,6 +16,6 @@ public class Main {
         TerminalThread terminalThread = manager.getTerminalThread();
 
         terminalThread.addListener(TerminalAction.onTerminalConnected, mainWindow);
-        terminalThread.addListener(TerminalAction.onTerminalConnected, mainWindow);
+        terminalThread.addListener(TerminalAction.onTerminalDisconnected, mainWindow);
     }
 }
