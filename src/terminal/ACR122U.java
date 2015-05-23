@@ -1,6 +1,13 @@
 package terminal;
 
-enum ACR_122U_ERRORS {
+import javax.smartcardio.*;
+import javax.xml.crypto.Data;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+
+enum ACR122U_ERRORS {
     NO_ERRORS                   (0x00,  "No error"),
     TIME_OUT                    (0x01,  "Time Out, the target has not answered"),
     CRC_ERROR                   (0x02,  "A CRC error has been detected by the contactless UART"),
@@ -49,7 +56,7 @@ enum ACR_122U_ERRORS {
     private final int errorCode;
     private final String errorDescription;
 
-    ACR_122U_ERRORS(int code, String description) {
+    ACR122U_ERRORS(int code, String description) {
         this.errorCode = code;
         this.errorDescription = description;
     }
@@ -59,6 +66,116 @@ enum ACR_122U_ERRORS {
 }
 
 
-public class ACR122U {
+class DataFrame {
+    private byte CLS;
+    private byte INS;
+    private byte P1;
+    private byte P2;
+    private byte LE;
+    private List<Byte> DATA;
 
+    public DataFrame() {
+    }
+
+    public byte getCLS() { return CLS; }
+    public byte getINS() { return INS; }
+    public byte getP1() { return P1; }
+    public byte getP2() { return P2; }
+    public byte getLE() { return LE; }
+    public byte[] getData() {
+        if (DATA == null) {
+            byte[] resp = new byte[1];
+            resp[0] = 0;
+            return resp;
+        }
+        byte[] resp = new byte[DATA.size()];
+        for (int i=0; i<resp.length; i++) {
+            resp[i] = DATA.get(i);
+        }
+        return resp;
+    }
+
+    public void setCLS(byte cls) { CLS = cls; }
+    public void setCLS(int cls) { CLS = (byte)cls; }
+
+    public void setINS(byte ins) { INS = ins; }
+    public void setINS(int ins) { INS = (byte)ins; }
+
+    public void setP1(byte p1) { P1 = p1; }
+    public void setP1(int p1) { P1 = (byte)p1; }
+
+    public void setP2(byte p2) { P2 = p2; }
+    public void setP2(int p2) { P2 = (byte)p2; }
+
+    public void setLE(byte le) { LE = le; }
+    public void setLE(int le) { LE = (byte)le; }
+
+    public void setData(byte[] data) {
+        DATA = new ArrayList<>();
+        for (byte d : data) {
+            DATA.add(d);
+        }
+    }
+    public void setData(int[] data) {
+        DATA = new ArrayList<>();
+        for (int d : data) {
+            DATA.add((byte)d);
+        }
+    }
+    public void setData(Collection data) {
+    }
+
+    public byte[] toBytes() {
+        List<Byte> data = new ArrayList<>();
+        data.add(CLS);
+        data.add(INS);
+        data.add(P1);
+        data.add(P2);
+        if (DATA != null) data.addAll(DATA);
+
+        byte[] resp = new byte[data.size()];
+        for (int i=0; i<resp.length; i++) {
+            resp[i] = data.get(i);
+        }
+
+        return resp;
+    }
+
+}
+
+
+public class ACR122U {
+    private Card card;
+
+    public ACR122U(Card card) {
+        this.card = card;
+    }
+
+    public String getFirmwareVersion() {
+        try {
+            DataFrame frame = new DataFrame();
+            frame.setCLS(0xFF);
+            frame.setINS(0x00);
+            frame.setP1(0x48);
+            frame.setP2(0x00);
+            frame.setLE(0x00);
+            ResponseAPDU answer = sendDataFrame(frame);
+            return new String(answer.getBytes());
+        } catch (CardException e) {
+            return "";
+        }
+    }
+
+    private ResponseAPDU sendDataFrame(DataFrame dataFrame) throws CardException {
+
+        CardChannel cardChannel = card.getBasicChannel();
+        CommandAPDU command = new CommandAPDU(
+                dataFrame.getCLS(),
+                dataFrame.getINS(),
+                dataFrame.getP1(),
+                dataFrame.getP2(),
+                dataFrame.getData()
+        );
+        return cardChannel.transmit(command);
+    }
 }

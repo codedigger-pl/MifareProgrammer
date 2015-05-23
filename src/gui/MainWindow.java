@@ -39,32 +39,8 @@ public class MainWindow implements TerminalListener, CardListener {
     @Override
     public void onCardConnected(CardThread sender, Card card) {
         cardName.setText("Karta obecna");
-//        CardChannel cardChannel = card.getBasicChannel();
-//
-//        try {
-//            ResponseAPDU answer = null;
-////            answer = cardChannel.transmit(new CommandAPDU(0x00, 0xA4, 0x04, 0x00, aid));
-////            System.out.println("answer: " + answer.toString());
-//
-//            // Send test command
-//            int cla = 0xff;
-//            int ins = 0xff;
-//            int p1 = 0x48;
-//            int p2 = 0b00000000; //led state control
-//            int lc = 0x04;
-//            byte[] data = {(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00};
-//            answer = cardChannel.transmit(new CommandAPDU(cla, ins, p1, p2, data));
-//            System.out.println("answer: " + answer.toString());
-//            byte r[] = answer.getData();
-//            for (int i=0; i<r.length; i++)
-//                System.out.print((char)r[i]);
-//            System.out.println();
-//
-////             Disconnect the card
-////            card.disconnect(false);
-//        } catch (CardException e) {
-//            e.printStackTrace();
-//        }
+        ACR122U acr122U = new ACR122U(card);
+        System.out.println(acr122U.getFirmwareVersion());
     }
 
     @Override
