@@ -24,19 +24,17 @@ public class TerminalThread extends Thread {
         while (true) {
 
             try {
-                List<CardTerminal> readedTerminals = factory.terminals().list();
-                CardTerminal readedTerminal = readedTerminals.get(0);
-                if (terminal != readedTerminal) {
-                    terminal = readedTerminal;
+                List<CardTerminal> readTerminals = factory.terminals().list();
+                CardTerminal readTerminal = readTerminals.get(0);
+                if (terminal != readTerminal) {
+                    terminal = readTerminal;
                     startCardThread();
-                    onTerminalAppears();
-                }
+                    onTerminalAppears(); }
             } catch (CardException e) {
                 stopCardThread();
                 if (terminal != null) {
                     onTerminalDisappears();
-                    terminal = null;
-                }
+                    terminal = null; }
             }
 
             try {
@@ -51,15 +49,13 @@ public class TerminalThread extends Thread {
     private void startCardThread() {
         if (cardThread == null) {
             cardThread = new CardThread(terminal);
-            cardThread.start();
-        }
+            cardThread.start(); }
     }
 
     private void stopCardThread() {
         if (cardThread != null) {
             cardThread.interrupt();
-            cardThread = null;
-        }
+            cardThread = null; }
     }
 
     public void addListener(TerminalAction action, TerminalListener listener) {
@@ -75,13 +71,11 @@ public class TerminalThread extends Thread {
 
     private void onTerminalAppears() {
         for (TerminalListener listener: onTerminalConnectedListeners) {
-            listener.onTerminalAppears(this, terminal);
-        }
+            listener.onTerminalAppears(this, terminal); }
     }
 
     private void onTerminalDisappears() {
         for (TerminalListener listener: onTerminalDisconnectedListeners) {
-            listener.onTerminalDisappears();
-        }
+            listener.onTerminalDisappears(); }
     }
 }

@@ -8,18 +8,14 @@ public class TerminalManager {
 
     public void startTerminalThread() {
         if (terminalThread == null) {
-//            System.out.println("Starting terminal thread");
             terminalThread = new TerminalThread();
-            terminalThread.start();
-        }
+            terminalThread.start(); }
     }
 
     public void stopTerminalThread() {
         if (terminalThread != null) {
-//            System.out.println("Stopping terminal thread");
             terminalThread.interrupt();
-            terminalThread = null;
-        }
+            terminalThread = null; }
     }
 
 }

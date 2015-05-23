@@ -58,13 +58,11 @@ public class CardThread extends Thread {
 
     void onCardConnected() {
         for(CardListener listener: onCardConnectedListeners) {
-            listener.onCardConnected(card);
-        }
+            listener.onCardConnected(this, card); }
     }
 
     void onCardDisconnected() {
         for (CardListener listener: onCardDisconnectedListeners) {
-            listener.onCardDisconnected();
-        }
+            listener.onCardDisconnected(); }
     }
 }

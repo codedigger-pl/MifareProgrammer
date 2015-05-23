@@ -25,10 +25,10 @@ public class MainWindow implements TerminalListener, CardListener {
     }
 
     @Override
-    public void onTerminalAppears(TerminalThread thread, CardTerminal terminal) {
+    public void onTerminalAppears(TerminalThread sender, CardTerminal terminal) {
         terminalName.setText(terminal.getName());
 
-        CardThread cardThread = thread.getCardThread();
+        CardThread cardThread = sender.getCardThread();
         cardThread.addListener(CardAction.onCardConnected, this);
         cardThread.addListener(CardAction.onCardDisconnected, this);
     }
@@ -39,7 +39,7 @@ public class MainWindow implements TerminalListener, CardListener {
     }
 
     @Override
-    public void onCardConnected(Card card) { cardName.setText("Karta obecna"); }
+    public void onCardConnected(CardThread sender, Card card) { cardName.setText("Karta obecna"); }
 
     @Override
     public void onCardDisconnected() { cardName.setText("Brak karty"); }
